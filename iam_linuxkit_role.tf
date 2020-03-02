@@ -46,6 +46,23 @@ resource "aws_iam_role_policy_attachment" "linuxkit" {
   policy_arn = aws_iam_policy.linuxkit.arn
 }
 
-output "linuxkit_role_arn" {
-  value = aws_iam_role.linuxkit.arn
+resource "aws_iam_group" "linuxkit" {
+  name = "linuxkit"
+}
+
+data "aws_iam_policy_document" "linuxkit_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    effect  = "Allow"
+    resources = [
+      aws_iam_role.linuxkit.arn,
+    ]
+  }
+}
+
+resource "aws_iam_group_policy" "linuxkit_policy" {
+  name  = "linuxkit-role-assume"
+  group = aws_iam_group.linuxkit.id
+
+  policy = data.aws_iam_policy_document.linuxkit_policy.json
 }
