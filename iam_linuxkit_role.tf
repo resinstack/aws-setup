@@ -47,10 +47,14 @@ resource "aws_iam_role_policy_attachment" "linuxkit" {
 }
 
 resource "aws_iam_group" "linuxkit" {
+  count = var.create_group ? 1 : 0
+
   name = "linuxkit"
 }
 
 data "aws_iam_policy_document" "linuxkit_policy" {
+  count = var.create_group ? 1 : 0
+
   statement {
     actions = ["sts:AssumeRole"]
     effect  = "Allow"
@@ -61,8 +65,10 @@ data "aws_iam_policy_document" "linuxkit_policy" {
 }
 
 resource "aws_iam_group_policy" "linuxkit_policy" {
-  name  = "linuxkit-role-assume"
-  group = aws_iam_group.linuxkit.id
+  count = var.create_group ? 1 : 0
 
-  policy = data.aws_iam_policy_document.linuxkit_policy.json
+  name  = "linuxkit-role-assume"
+  group = aws_iam_group.linuxkit[0].id
+
+  policy = data.aws_iam_policy_document.linuxkit_policy[0].json
 }
