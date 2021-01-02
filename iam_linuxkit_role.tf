@@ -9,6 +9,19 @@ data "aws_iam_policy_document" "linuxkit_assume" {
       identifiers = [data.aws_caller_identity.self.account_id]
     }
   }
+
+  dynamic "statement" {
+    for_each = toset(var.trusted_aws_principals)
+
+    content {
+      actions = ["sts:AssumeRole"]
+      effect  = "Allow"
+      principals {
+        type        = "AWS"
+        identifiers = [statement.value]
+      }
+    }
+  }
 }
 
 resource "aws_iam_role" "linuxkit" {

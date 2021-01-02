@@ -8,3 +8,9 @@ variable "create_group" {
   description = "Create a group with authority to assume the linuxkit role"
   default     = false
 }
+
+variable "trusted_aws_principals" {
+  type = list(string)
+  description = "List of ARNs that may assume the linuxkit role"
+  default = []
+}
